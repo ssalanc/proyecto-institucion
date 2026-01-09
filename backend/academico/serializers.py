@@ -45,7 +45,7 @@ class CarreraSerializer(serializers.ModelSerializer):
         
         if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-]+$', value):
             raise serializers.ValidationError(
-                "El nombre solo puede contener letrasy guiones."
+                "El nombre solo puede contener letras."
             )
 
         if len(value.strip()) < 3:

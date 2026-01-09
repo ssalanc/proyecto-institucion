@@ -9,6 +9,7 @@ interface CarrerasTableProps {
   onEdit: (carrera: Carrera) => void;
   onDelete: (id: number) => void;
   isLoading?: boolean;
+  currentPage: number;
 }
 
 export default function CarrerasTable({
@@ -16,6 +17,7 @@ export default function CarrerasTable({
   onEdit,
   onDelete,
   isLoading,
+  currentPage,
 }: CarrerasTableProps) {
   // Estado para el modal de confirmación personalizado
   const [confirmDelete, setConfirmDelete] = useState<{show: boolean, id: number | null}>({
@@ -66,7 +68,7 @@ export default function CarrerasTable({
             {carreras.map((carrera, index) => (
               <tr key={carrera.id} className="hover:bg-gray-50 transition">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 bg-gray-50 border-r border-gray-200">
-                  {index + 1}
+                  {(currentPage - 1) * 10 + index + 1}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">
@@ -125,7 +127,7 @@ export default function CarrerasTable({
 
       {/* MODAL DE CONFIRMACIÓN CON FONDO BLURRED Y CENTRADO */}
       {confirmDelete.show && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
           {/* Capa de fondo con Blur */}
           <div 
             className="absolute inset-0 bg-black/40 backdrop-blur-sm" 

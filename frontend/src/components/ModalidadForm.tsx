@@ -37,18 +37,13 @@ export default function ModalidadForm({
     const newErrors: { nombre?: string } = {};
     const nombreTrimmed = formData.nombre.trim();
 
-    if (!formData.nombre.trim()) {
+    if (!nombreTrimmed) {
       newErrors.nombre = 'El nombre es obligatorio';
+    } else if (nombreTrimmed.length < 3) {
+      newErrors.nombre = 'El nombre debe tener al menos 3 caracteres';
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-']+$/.test(nombreTrimmed)) {
+      newErrors.nombre = 'Solo se permiten letras y guiones. No se permiten números ni símbolos especiales';
     }
-
-    // Validar longitud mínima
-  else if (nombreTrimmed.length < 3) {
-    newErrors.nombre = 'El nombre debe tener al menos 3 caracteres';
-  } 
-  // Validar caracteres permitidos
-  else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-']+$/.test(nombreTrimmed)) {
-    newErrors.nombre = 'Solo se permiten letras y guiones. No se permiten números ni símbolos especiales';
-  }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -63,8 +58,8 @@ export default function ModalidadForm({
   };
 
   return (
-    <div className="fixed inset-0 bg-white/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full border border-gray-200">
         <div className="flex justify-between items-center p-6 border-b">
           <h2 className="text-2xl font-bold text-gray-900">
             {modalidad ? 'Editar Modalidad' : 'Nueva Modalidad'}
@@ -81,9 +76,9 @@ export default function ModalidadForm({
           <div>
             <label
               htmlFor="nombre"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-900 mb-1"
             >
-              Nombre <span className="text-red-500">*</span>
+              Nombre <span className="text-red-600">*</span>
             </label>
             <input
               type="text"
@@ -92,13 +87,15 @@ export default function ModalidadForm({
               onChange={(e) =>
                 setFormData({ ...formData, nombre: e.target.value })
               }
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.nombre ? 'border-red-500' : 'text-gray-500'
+              className={`w-full px-3 py-2 border-2 rounded-md focus:outline-none focus:ring-2 text-gray-900 ${
+                errors.nombre 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300 focus:ring-blue-500'
               }`}
               placeholder="Ej: Presencial"
             />
             {errors.nombre && (
-              <p className="mt-1 text-sm text-red-500">{errors.nombre}</p>
+              <p className="mt-1 text-sm text-red-600">{errors.nombre}</p>
             )}
           </div>
 
@@ -128,7 +125,7 @@ export default function ModalidadForm({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:bg-blue-400"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow-md transition disabled:bg-blue-400"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Guardando...' : 'Guardar'}

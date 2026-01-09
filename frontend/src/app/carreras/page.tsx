@@ -30,6 +30,22 @@ export default function CarrerasPage() {
     setCarreraSearchFilter,
   } = useStore();
 
+  // Funciones que resetean la página
+  const handleSearchChange = (value: string) => {
+    setCarreraSearchFilter(value);
+    setCurrentPage(1);
+  };
+
+  const handleEstadoChange = (value: boolean | null) => {
+    setCarreraEstadoFilter(value);
+    setCurrentPage(1);
+  };
+
+  const handleModalidadChange = (value: number | null) => {
+    setCarreraModalidadFilter(value);
+    setCurrentPage(1);
+  };
+
   // React Query hooks
   const { data, isLoading } = useCarreras({
     estado: carreraEstadoFilter,
@@ -57,9 +73,7 @@ export default function CarrerasPage() {
     deleteMutation.mutate(id);
   };
 
-  const handleSubmit = (
-    formData: Omit<Carrera, 'id' | 'modalidad_nombre'>
-  ) => {
+  const handleSubmit = (formData: Omit<Carrera, 'id' | 'modalidad_nombre'>) => {
     if (editingCarrera) {
       updateMutation.mutate(
         { id: editingCarrera.id, data: formData },
@@ -93,9 +107,7 @@ export default function CarrerasPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Carreras</h1>
-          <p className="text-gray-600 mt-1">
-            Gestión de carreras profesionales
-          </p>
+          <p className="text-gray-600 mt-1">Gestión de carreras profesionales</p>
         </div>
         <button
           onClick={handleCreate}
@@ -111,17 +123,23 @@ export default function CarrerasPage() {
         searchValue={carreraSearchFilter}
         estadoValue={carreraEstadoFilter}
         modalidadValue={carreraModalidadFilter}
-        onSearchChange={setCarreraSearchFilter}
-        onEstadoChange={setCarreraEstadoFilter}
-        onModalidadChange={setCarreraModalidadFilter}
+        onSearchChange={handleSearchChange}
+        onEstadoChange={handleEstadoChange}
+        onModalidadChange={handleModalidadChange}
       />
 
       {/* Stats */}
       {data && (
         <div className="bg-white rounded-lg shadow p-4">
           <p className="text-sm text-gray-600">
-            Total de registros:{' '}
-            <span className="font-semibold text-gray-900">{data.count}</span>
+            {data.count > 0 ? (
+              <>
+                Mostrando {(currentPage - 1) * 10 + 1}-{Math.min(currentPage * 10, data.count)} de {data.count} registros
+                {data.count > 10 && ` (Página ${currentPage} de ${totalPages})`}
+              </>
+            ) : (
+              'Mostrando 0 de 0 registros'
+            )}
           </p>
         </div>
       )}
@@ -132,6 +150,7 @@ export default function CarrerasPage() {
         onEdit={handleEdit}
         onDelete={handleDelete}
         isLoading={isLoading}
+        currentPage={currentPage}
       />
 
       {/* Pagination */}
@@ -139,7 +158,7 @@ export default function CarrerasPage() {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          onPageChange={(page) => setCurrentPage(page)}
           hasNext={!!data.next}
           hasPrevious={!!data.previous}
         />

@@ -30,6 +30,17 @@ export default function ModalidadesPage() {
     setModalidadSearchFilter,
   } = useStore();
 
+  //  resetean la página al cambiar filtros
+  const handleSearchChange = (value: string) => {
+    setModalidadSearchFilter(value);
+    setCurrentPage(1); // ← Resetear a página 1
+  };
+
+  const handleEstadoChange = (value: boolean | null) => {
+    setModalidadEstadoFilter(value);
+    setCurrentPage(1); // ← Resetear a página 1
+  };
+
   // React Query hooks
   const { data, isLoading } = useModalidades({
     estado: modalidadEstadoFilter,
@@ -103,30 +114,37 @@ export default function ModalidadesPage() {
         </button>
       </div>
 
-      {/* Filters */}
+      {/* Filters  */}
       <ModalidadesFilters
         searchValue={modalidadSearchFilter}
         estadoValue={modalidadEstadoFilter}
-        onSearchChange={setModalidadSearchFilter}
-        onEstadoChange={setModalidadEstadoFilter}
+        onSearchChange={handleSearchChange}      
+        onEstadoChange={handleEstadoChange}      
       />
 
-      {/* Stats */}
+      {/* rango de registros */}
       {data && (
         <div className="bg-white rounded-lg shadow p-4">
           <p className="text-sm text-gray-600">
-            Total de registros:{' '}
-            <span className="font-semibold text-gray-900">{data.count}</span>
+            {data.count > 0 ? (
+              <>
+                Mostrando {(currentPage - 1) * 10 + 1}-{Math.min(currentPage * 10, data.count)} de {data.count} registros
+                {data.count > 10 && ` (Página ${currentPage} de ${totalPages})`}
+              </>
+            ) : (
+              'Mostrando 0 de 0 registros'
+            )}
           </p>
         </div>
       )}
 
-      {/* Table */}
+      {/* Table  */}
       <ModalidadesTable
         modalidades={data?.results || []}
         onEdit={handleEdit}
         onDelete={handleDelete}
         isLoading={isLoading}
+        currentPage={currentPage}  
       />
 
       {/* Pagination */}
@@ -134,7 +152,7 @@ export default function ModalidadesPage() {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          onPageChange={(page) => setCurrentPage(page)}  // ← Usar callback
           hasNext={!!data.next}
           hasPrevious={!!data.previous}
         />

@@ -9,6 +9,7 @@ interface ModalidadesTableProps {
   onEdit: (modalidad: Modalidad) => void;
   onDelete: (id: number) => void;
   isLoading?: boolean;
+  currentPage: number;
 }
 
 export default function ModalidadesTable({
@@ -16,6 +17,7 @@ export default function ModalidadesTable({
   onEdit,
   onDelete,
   isLoading,
+  currentPage,
 }: ModalidadesTableProps) {
   // Estado para el modal de confirmación personalizado
   const [confirmDelete, setConfirmDelete] = useState<{show: boolean, id: number | null}>({
@@ -64,7 +66,7 @@ export default function ModalidadesTable({
               <tr key={modalidad.id} className="hover:bg-gray-50 transition">
                 {/* ÍNDICE CORRELATIVO */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 bg-gray-50 border-r border-gray-200">
-                  {index + 1}
+                  {(currentPage - 1) * 10 + index + 1}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">
@@ -118,7 +120,7 @@ export default function ModalidadesTable({
 
       {/* MODAL DE CONFIRMACIÓN CENTRADO CON BLUR */}
       {confirmDelete.show && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
           {/* Fondo desenfocado */}
           <div 
             className="absolute inset-0 bg-black/40 backdrop-blur-sm" 

@@ -133,7 +133,7 @@ export default function CarreraForm({
                   modalidad: parseInt(e.target.value),
                 })
               }
-              // CAMBIO AQUÍ: Igual que el input anterior
+              // input 
               className={`w-full px-3 py-2 border-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500 ${
                 errors.modalidad ? 'border-red-500 bg-red-50' : 'border-gray-400'
               }`}
